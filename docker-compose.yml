@@ -1,0 +1,20 @@
+version: '3'
+services:
+
+  jokes-api:
+    image: jokes-api:latest
+    ports:
+      - 3000:3000
+    restart: always
+
+  jokes-ui:
+    image: jokes-ui:latest
+    depends_on:
+      - jokes-api
+    environment:
+      - API_HOST=jokes-api
+      - API_PORT=3000
+    ports:
+      - 8080:80
+    command: /bin/sh -c "envsubst '$$API_HOST $$API_PORT' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+    restart: always
